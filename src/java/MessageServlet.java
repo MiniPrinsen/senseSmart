@@ -13,6 +13,7 @@ import org.bson.Document;
 
 public class MessageServlet extends HttpServlet {
 	private int hej = 5;
+        private int hej2 = 2;
     
     private PrintWriter out;
     String storedText = "";
