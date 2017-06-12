@@ -1,3 +1,4 @@
+/*TJENA?????*/
 import java.io.*;
 import javax.servlet.*;
 import java.net.URLEncoder;
@@ -11,6 +12,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 public class MessageServlet extends HttpServlet {
+	private int hej = 5;
     
     private PrintWriter out;
     String storedText = "";
