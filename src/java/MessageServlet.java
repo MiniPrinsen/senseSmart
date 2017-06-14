@@ -1,7 +1,6 @@
 /*TJENA?????*/
 import java.io.*;
 import javax.servlet.*;
-import java.net.URLEncoder;
 import javax.servlet.http.*;
 
 import com.mongodb.MongoClient;
@@ -9,9 +8,16 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import java.awt.image.BufferedImage;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import javax.imageio.ImageIO;
+import javax.servlet.annotation.MultipartConfig;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+
 import org.bson.Document;
 
-
+@MultipartConfig
 public class MessageServlet extends HttpServlet {
 	private int hej = 5;
         private int hej2 = 2;
@@ -30,6 +36,39 @@ public class MessageServlet extends HttpServlet {
         
         Document as;
     
+        
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+throws ServletException, IOException {
+        //response.setContentType("image/png");
+        out = response.getWriter(); 
+       // out.println("Ingen bild laddades upp"+request.getParts().toString());
+        Collection<Part> parts = request.getParts();
+        
+        for (Part p : parts){
+            String type = p.getName();
+            if (!type.equals("file")){
+                InputStream inputstream = p.getInputStream();
+                out.println(type);
+                String value = getStringFromInputStream(inputstream);
+             //   out.println(value);
+               // System.out.println(value);
+                
+                //out.println();
+            }
+            else{               
+                BufferedImage bufferedImage = ImageIO.read(p.getInputStream());
+               // ImageIO.write(bufferedImage, "png", response.getOutputStream());
+               ImageIO.write(bufferedImage, "png", new File("/Users/gustafwennerstrom/Documents/Jobb/SenseSmart/Databas/images/123lolhaha.png"));
+                //out.write("DE BLEV");
+                
+                
+
+            }
+        }
+       
+    }
+        
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
@@ -60,6 +99,8 @@ public class MessageServlet extends HttpServlet {
                 getValue();
         }*/
     }
+    
+    
     
     public void hello(){
         out.println("HEJ");
@@ -221,7 +262,29 @@ public class MessageServlet extends HttpServlet {
         
         
         }
+        
+        
        }
+       
+       private String getStringFromInputStream(InputStream is) {
+
+		BufferedReader br = null;
+		StringBuilder sb = new StringBuilder();
+
+		String line;
+		try {
+			br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+
+		} catch (IOException e) {
+			out.println(e.getMessage());
+		} 	
+
+		return sb.toString();
+
+	}
 
 
 
