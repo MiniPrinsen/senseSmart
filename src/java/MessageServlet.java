@@ -44,10 +44,36 @@ throws ServletException, IOException {
         out = response.getWriter(); 
        // out.println("Ingen bild laddades upp"+request.getParts().toString());
         Collection<Part> parts = request.getParts();
+        CityObject cityobject = new CityObject();
         
         for (Part p : parts){
             String type = p.getName();
-            if (!type.equals("file")){
+            
+            switch (type){
+                case "name":
+                    cityobject.setName(getStringFromInputStream(
+                    p.getInputStream()));
+                    break;
+                case "description":
+                    cityobject.setDescription(
+                            getStringFromInputStream(p.getInputStream()));
+                    break;
+                case "longitude":
+                    cityobject.setLongitute(Long.parseLong(getStringFromInputStream(
+                            p.getInputStream())));
+                    break;
+                case "latitude":
+                    cityobject.setLatitude(Long.parseLong(getStringFromInputStream(
+                            p.getInputStream())));
+                    break;
+                case "image":
+                    BufferedImage bufferedImage = ImageIO.read(p.getInputStream());
+                    cityobject.addImage(bufferedImage);
+                    break;  
+            
+            
+            
+            /*if (!type.equals("file")){
                 InputStream inputstream = p.getInputStream();
                 out.println(type);
                 String value = getStringFromInputStream(inputstream);
@@ -61,11 +87,21 @@ throws ServletException, IOException {
                // ImageIO.write(bufferedImage, "png", response.getOutputStream());
                ImageIO.write(bufferedImage, "png", new File("/Users/gustafwennerstrom/Documents/Jobb/SenseSmart/Databas/images/123lolhaha.png"));
                 //out.write("DE BLEV");
-                
+               */
                 
 
             }
+            
         }
+        out.print(cityobject.getLength());
+        out.print(cityobject.toString());
+        
+        for (int i = 0; i<cityobject.getImages().size(); i++){
+            ImageIO.write(cityobject.getImages().get(i), "png", new File(
+                    "/Users/gustafwennerstrom/Documents/Jobb/SenseSmart/Databas"
+                            + "/images/"+cityobject.getName()+"-"+i+".png"));
+        }
+
        
     }
         
@@ -78,11 +114,15 @@ throws ServletException, IOException {
         
         
         
-        out.println("TJENA ALLA HAHAa");
-        String message = request.getParameter("message");
-        getValuez();
-        if (message != null){
-            out.println("SA DU "+message+"??????");
+      //  out.println("TJENA ALLA HAHAa");
+        String longitude = request.getParameter("longitude");
+        String latitude = request.getParameter("latitude");
+
+        if (longitude != null){
+            out.println("Longitude "+longitude+"?");
+        }
+        if (latitude != null){
+            out.println("Latitude "+latitude+"?");
         }
         /*Bot bot = new Bot();
         
@@ -100,11 +140,7 @@ throws ServletException, IOException {
         }*/
     }
     
-    
-    
-    public void hello(){
-        out.println("HEJ");
-    }
+   
     
        /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -267,24 +303,24 @@ throws ServletException, IOException {
        }
        
        private String getStringFromInputStream(InputStream is) {
+           
+            BufferedReader br = null;
+            StringBuilder sb = new StringBuilder();
 
-		BufferedReader br = null;
-		StringBuilder sb = new StringBuilder();
+            String line;
+            try {
+                br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                while ((line = br.readLine()) != null) {
+                        sb.append(line);
+                }
 
-		String line;
-		try {
-			br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}
-
-		} catch (IOException e) {
-			out.println(e.getMessage());
-		} 	
-
-		return sb.toString();
-
-	}
+            } catch (IOException e) {
+                out.println(e.getMessage());
+            }
+            
+            return sb.toString();
+       
+       }
 
 
 
