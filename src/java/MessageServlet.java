@@ -11,8 +11,10 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
+
 public class MessageServlet extends HttpServlet {
 	private int hej = 5;
+        private int hej2 = 2;
     
     private PrintWriter out;
     String storedText = "";
@@ -34,9 +36,16 @@ public class MessageServlet extends HttpServlet {
     throws ServletException, IOException {
         
         out = response.getWriter();
-
+        
+        
+        
+        out.println("TJENA ALLA HAHAa");
         String message = request.getParameter("message");
-        Bot bot = new Bot();
+        getValuez();
+        if (message != null){
+            out.println("SA DU "+message+"??????");
+        }
+        /*Bot bot = new Bot();
         
         if (message != null){
             try {
@@ -49,8 +58,40 @@ public class MessageServlet extends HttpServlet {
         else{
             
                 getValue();
+        }*/
+    }
+    
+    public void hello(){
+        out.println("HEJ");
+    }
+    
+       /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet Server</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet Server at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
     }
+
+    
     public String getValue() throws IOException {
         it = iter.iterator();
         
@@ -89,5 +130,100 @@ public class MessageServlet extends HttpServlet {
             return false;
         }
     }
+       
+       
+       public void doStuff(){
+        try{   	
+         // To connect to mongodb server
+         MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
+			
+         // Now connect to your databases
+        
+         out.println("Connect to database successfully");
+         
+         MongoDatabase database = mongoClient.getDatabase("test");
+         
+            MongoCollection<Document> collection = database.getCollection("cityobjects");
+            out.println(collection.find().toString());
+          
+        /*
+         collection.insertOne(new Document("address",
+                new Document()
+                        .append("salutation", Arrays.asList("helllo", "hej", 
+                                "HEJ, kul att du är här!", "Tjena!")
+                )));
+	*/
+      }catch(Exception e){
+         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+      }
+        
+   }
+       
+       public void getValuez(){
+        String storedText = "";
+        
+        MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
+
+        MongoDatabase database = mongoClient.getDatabase("test");
+
+        MongoCollection collec1 = database.getCollection("cityobjects"); 
+        
+        
+        FindIterable<Document> iter = collec1.find();
+        
+        MongoCursor it;
+        
+        it = iter.iterator();
+        
+        Document as;
+        
+        
+        while (it.hasNext()){
+            
+            as = (Document)it.next();
+            storedText = as.toString();
+            as.remove("_id");
+            out.println(as.toJson()+"HEJ");
+//            out.println(as.get("salutation"));
+
+           /* if (as.get("name") != null){
+                 String hej = (as.get("name")).toString();
+                     out.println("NAME: " + hej);
+                 
+            }
+            
+            if (as.get("coord") != null){
+                 String hej = (as.get("coord")).toString();
+                 out.println("\tCOORDS:\t\t\t" + hej);
+                 
+            }
+              
+            if (as.get("tumbnail") != null){
+                 String hej = (as.get("tumbnail")).toString();
+                 out.println("\tTMBNAIL:\t\t" + hej);
+                 
+            }
+                
+            if (as.get("image") != null){
+                 String hej = (as.get("image")).toString();
+                 out.println("\tIMG:\t\t\t" + hej);
+                 
+            }*/
+           
+ 
+        
+        //}
+        
+        
+        
+        
+    
+        
+        
+        }
+       }
+
+
+
 }
     
