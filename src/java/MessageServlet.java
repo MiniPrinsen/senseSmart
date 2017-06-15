@@ -13,36 +13,27 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import javax.imageio.ImageIO;
 import javax.servlet.annotation.MultipartConfig;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 import org.bson.Document;
 
 @MultipartConfig
 public class MessageServlet extends HttpServlet {
-	private int hej = 5;
-        private int hej2 = 2;
-    
     private PrintWriter out;
-    String storedText = "";
-        MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
 
-        MongoDatabase database = mongoClient.getDatabase("touchpoints");
-
-        MongoCollection collec1 = database.getCollection("touchpoints");
-       
-
-        FindIterable<Document> iter = collec1.find();
-        MongoCursor it;
         
-        Document as;
-    
-        
+    /**
+     * 
+     * Läser in statsobjekt från formulär 
+     * 
+     * @param request Input from user
+     * @param response Output from server back to user
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-throws ServletException, IOException {
-        //response.setContentType("image/png");
+        throws ServletException, IOException {
         out = response.getWriter(); 
-       // out.println("Ingen bild laddades upp"+request.getParts().toString());
         Collection<Part> parts = request.getParts();
         CityObject cityobject = new CityObject();
         
@@ -70,51 +61,36 @@ throws ServletException, IOException {
                     BufferedImage bufferedImage = ImageIO.read(p.getInputStream());
                     cityobject.addImage(bufferedImage);
                     break;  
-            
-            
-            
-            /*if (!type.equals("file")){
-                InputStream inputstream = p.getInputStream();
-                out.println(type);
-                String value = getStringFromInputStream(inputstream);
-             //   out.println(value);
-               // System.out.println(value);
-                
-                //out.println();
-            }
-            else{               
-                BufferedImage bufferedImage = ImageIO.read(p.getInputStream());
-               // ImageIO.write(bufferedImage, "png", response.getOutputStream());
-               ImageIO.write(bufferedImage, "png", new File("/Users/gustafwennerstrom/Documents/Jobb/SenseSmart/Databas/images/123lolhaha.png"));
-                //out.write("DE BLEV");
-               */
-                
 
             }
             
-        }
-        out.print(cityobject.getLength());
+        }        
         out.print(cityobject.toString());
         
+        /* Sparar bilder till filsystemet */
         for (int i = 0; i<cityobject.getImages().size(); i++){
             ImageIO.write(cityobject.getImages().get(i), "png", new File(
                     "/Users/gustafwennerstrom/Documents/Jobb/SenseSmart/Databas"
                             + "/images/"+cityobject.getName()+"-"+i+".png"));
         }
-
-       
     }
         
+    /**
+     * 
+     * Den här anropas när du går via webben till /Sensesmart/hey utan
+     * att använda post
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
     throws ServletException, IOException {
         
         out = response.getWriter();
-        
-        
-        
-      //  out.println("TJENA ALLA HAHAa");
         String longitude = request.getParameter("longitude");
         String latitude = request.getParameter("latitude");
 
@@ -124,70 +100,12 @@ throws ServletException, IOException {
         if (latitude != null){
             out.println("Latitude "+latitude+"?");
         }
-        /*Bot bot = new Bot();
-        
-        if (message != null){
-            try {
-                
-              message = URLEncoder.encode(message, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-            }
-            out.println(bot.getReply(message));
-        }
-        else{
-            
-                getValue();
-        }*/
-    }
-    
-   
-    
-       /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Server</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Server at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
 
-    
-    public String getValue() throws IOException {
-        it = iter.iterator();
-        
-        while (it.hasNext()){
-        as = (Document)it.next();
-        storedText = as.toString();
-        out.println("NAME: "+as.getString("name"));
-        out.println("COORDINATES: "+as.get("coordinates"));
-        out.println("PICTURE: "+as.get("picture")+"\n");
-      
-  //then
-        	
-        if (as.get("toucnpoints") != null){
-        }
-//out.println(storedText);
-        }
-    return "";
     }
     
+        /**
+         *  Checks if a location is in a specific radius
+         */
        public static boolean inRadius(double lat1, double lng1, double lat2, double lng2, int radius) {
         double earthRadius = 6371000; //meters
         double dLat = Math.toRadians(lat2-lat1);
@@ -210,7 +128,8 @@ throws ServletException, IOException {
        
        
        public void doStuff(){
-        try{   	
+        
+           try{   	
          // To connect to mongodb server
          MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
 			
@@ -223,20 +142,14 @@ throws ServletException, IOException {
             MongoCollection<Document> collection = database.getCollection("cityobjects");
             out.println(collection.find().toString());
           
-        /*
-         collection.insertOne(new Document("address",
-                new Document()
-                        .append("salutation", Arrays.asList("helllo", "hej", 
-                                "HEJ, kul att du är här!", "Tjena!")
-                )));
-	*/
-      }catch(Exception e){
-         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+      }
+        catch(Exception e){
+         System.err.println(e.getClass().getName() + ": " + e.getMessage());
       }
         
    }
        
-       public void getValuez(){
+       public void testGetDataFromDatabase(){
         String storedText = "";
         
         MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
@@ -261,55 +174,27 @@ throws ServletException, IOException {
             storedText = as.toString();
             as.remove("_id");
             out.println(as.toJson()+"HEJ");
-//            out.println(as.get("salutation"));
-
-           /* if (as.get("name") != null){
-                 String hej = (as.get("name")).toString();
-                     out.println("NAME: " + hej);
-                 
-            }
-            
-            if (as.get("coord") != null){
-                 String hej = (as.get("coord")).toString();
-                 out.println("\tCOORDS:\t\t\t" + hej);
-                 
-            }
-              
-            if (as.get("tumbnail") != null){
-                 String hej = (as.get("tumbnail")).toString();
-                 out.println("\tTMBNAIL:\t\t" + hej);
-                 
-            }
-                
-            if (as.get("image") != null){
-                 String hej = (as.get("image")).toString();
-                 out.println("\tIMG:\t\t\t" + hej);
-                 
-            }*/
-           
- 
-        
-        //}
-        
-        
-        
-        
-    
-        
-        
         }
-        
         
        }
        
-       private String getStringFromInputStream(InputStream is) {
+       
+       /**
+        * 
+        * Creates a string from inputstream
+        * 
+        * @param inputstream 
+        * @return 
+        */
+       private String getStringFromInputStream(InputStream inputstream) {
            
             BufferedReader br = null;
             StringBuilder sb = new StringBuilder();
 
             String line;
             try {
-                br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                br = new BufferedReader(new InputStreamReader(inputstream,
+                        StandardCharsets.UTF_8));
                 while ((line = br.readLine()) != null) {
                         sb.append(line);
                 }
