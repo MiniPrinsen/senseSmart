@@ -1,24 +1,180 @@
 <!DOCTYPE html>
 <html>
-  <head><title>My Home Page</title></head>
+  <head>
+      <title>My Home Page</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"/> 
+    <script>
+        var validateStuff;
+    window.onload = function () { 
+
+                console.log("Här ska name va");
+                
+              //  var name = document.getElementById("name_input");
+              //  console.log(name);
+
+        var name = document.forms["addform"]["name"];
+        var description = document.forms["addform"]["description"];
+        var longitude = document.forms["addform"]["longitud"];
+        var latitude = document.forms["addform"]["latitude"];
+        
+        //Errors
+        var name_error = document.getElementById("name_error");
+        var description_error = document.getElementById("description_error");
+        var longitude_error = document.getElementById("longitude_error");
+        var latitude_error = document.getElementById("latitude_error");
+        
+        
+        //listeners
+        name.addEventListener("blur", nameVerify, true);
+        description.addEventListener("blur", descpriptionVerify, true);
+        longitude.addEventListener("blur", longitudeVerify, true);
+        latitude.addEventListener("blur", latitudeVerify, true);
+                
+        function nameVerify(){
+            if (name.value != ""){
+                name.style.border = "1px solid black";
+                name_error.innerHTML="";
+                return true;
+            }
+            else{
+                name.style.border = "1px solid red";
+                name_error.innerHTML = "<p>Du måste lägga till ett namn.</p>";
+
+                return false;
+            }
+        }
+        
+        function descpriptionVerify(){
+            if (description.value != ""){
+                description.style.border = "1px solid black";
+                description_error.innerHTML="";
+                return true;
+            }
+            else{
+                description.style.border = "1px solid red";
+                description_error.innerHTML = "<p>Du måste lägga till beskrivning.</p>";
+                return false;
+            }
+        }
+        
+        function longitudeVerify(){   
+              if(longitude.value == ""){
+                longitude.style.border = "1px solid red";
+                longitude_error.innerHTML = "<p>Fyll i koordinaten.</p>";
+                return false;
+            }
+            
+            var val = parseFloat(longitude.value);
+            if (!isNaN(val) && val <= 90 && val >= -90){
+                longitude.style.border = "1px solid black";
+                longitude_error.innerHTML="";
+                return true;
+            }
+            else{
+                longitude.style.border = "1px solid red";
+                longitude_error.innerHTML = "<p>fel format på koodinaterna.</p>";
+                return false;
+            }
+        }
+        
+        function latitudeVerify(){   
+            
+            if(latitude.value == ""){
+                latitude.style.border = "1px solid red";
+                latitude_error.innerHTML = "<p>Fyll i koordinaten.</p>";
+                return false;
+            }
+            var val = parseFloat(latitude.value);
+            
+            
+            if (!isNaN(val) && val <= 90 && val >= -90){
+                latitude.style.border = "1px solid black";
+                latitude_error.innerHTML="";
+                return true;
+            }
+            else{
+                latitude.style.border = "1px solid red";
+                latitude_error.innerHTML = "<p>fel format på koodinaterna.</p>";
+                return false;
+            }
+        }
+        
+        
+        document.forms["addform"].onsubmit = function validateForm(){
+            /* Checks name */
+            if (name.value == ""){
+                name.style.border = "1px solid red";
+                name_error.innerHTML = "<p>Du måste lägga till ett namn.</p>";
+                name.focus();
+                return false;
+            }
+            
+            /* Validate description */
+            if (description.value == ""){
+                description.style.border = "1px solid red";
+                description_error.innerHTML = "<p>Du måste lägga till beskrivning.</p>";
+                description.focus();
+                return false;
+            }
+            
+            if (!Regex.IsMatch(longitude.value, "^\d{2}:\d{2}:\d{2}[SN]$") ||
+                    longitude.value == ""){
+                description.style.border = "1px solid red";
+                description_error.innerHTML = "<p>fel format</p>";
+                description.focus();
+                return false;
+            }
+            
+            
+            
+        }
+    }
+    
+    
+    
+   
+        
+
+    </script>
+    
+</head>
   <body>
-    <h1>Lägg till objekt</h1>
-    <form method="post" action="hey" encType="multipart/form-data">
-        <p>Namn</p>
-        <input name="name" type="text"/>
-        <p>Beskrivning</p>
-        <input name="description" type="text"/>
-        <p>Longitude</p>
-        <input name="longitude" type="text"/>
-        <p>Latitude</p>
-        <input name="latitude" type="text"/>
+    
+    <div class="form-wrapper">
+    <h2>Lägg till objekt</h2>
+    <form name="addform" method="post" action="hey" encType="multipart/form-data">
+        
+        <div>
+            <input name="name" id="name_input"  type="text" class="txtInput" placeholder="Namn"/>
+            <div id="name_error" class="val_error"></div>
+        </div>
+        
+        <div>
+            <input name="description" type="text" class="txtInput" placeholder="Beskrivning"/>
+            <div id="description_error" class="val_error"></div>
+        </div>
+        <div>
+            <input name="longitude" type="text" class="txtInput" placeholder="Longitud"/>
+            <div id="longitude_error" class="val_error"></div>
+        </div>
+        <div>
+            <input name="latitude" type="text" class="txtInput" placeholder="Latitude"/>
+            <div id="latitude_error" class="val_error"></div>
+        </div>
+        
         <p>Bilder</p>
         <input name="image" type="file" multiple id="file"/>
-        <input type="submit"/>
+        <br>
+        <input type="submit" value="Lägg till" class="sendBtn"/>
     </form>
+  </div>
     
 
     
     
   </body>
 </html>
+
+ 

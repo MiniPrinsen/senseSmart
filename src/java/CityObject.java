@@ -1,7 +1,5 @@
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import sun.reflect.annotation.TypeAnnotation.LocationInfo.Location;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,9 +14,9 @@ import sun.reflect.annotation.TypeAnnotation.LocationInfo.Location;
 public class CityObject {
     private String name;
     private String description;
-    private ArrayList<BufferedImage> images;
-    private long longitude;
-    private long latitude;
+    private ArrayList<String> images;
+    private String longitude;
+    private String latitude;
     
     public int getLength(){
         return images.size();
@@ -28,11 +26,11 @@ public class CityObject {
         this.images = new ArrayList<>();
     }
     
-    public void addImage(BufferedImage image){
+    public void addImagePath(String image){
         images.add(image);
     }
     
-    public ArrayList<BufferedImage> getImages(){
+    public ArrayList<String> getImagePaths(){
         return images;
     }
     
@@ -52,19 +50,19 @@ public class CityObject {
         return this.description;
     }
     
-    public void setLongitute(long longitude){
+    public void setLongitute(String longitude){
         this.longitude = longitude;
     }
     
-    public long getLongitude(){
+    public String getLongitude(){
         return longitude;
     }
     
-    public void setLatitude(long latitude){
+    public void setLatitude(String latitude){
         this.latitude = latitude;
     }
     
-    public long getlatitude(){
+    public String getlatitude(){
         return latitude;
     }
     
@@ -72,6 +70,10 @@ public class CityObject {
     public String toString(){
         String info = "Name: "+this.name+"\nDescription: "+this.description+
                 "\nLongitude: "+this.longitude+"\nLatitude: "+this.latitude;
+        for (String path : this.images){
+            info = info + "\n"+path;
+        }
+        
         return info;
     }
 }

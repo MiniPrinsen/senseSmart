@@ -1,4 +1,5 @@
 /*TJENA?????*/
+import com.mongodb.BasicDBObject;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -37,42 +38,55 @@ public class MessageServlet extends HttpServlet {
         Collection<Part> parts = request.getParts();
         CityObject cityobject = new CityObject();
         
-        for (Part p : parts){
-            String type = p.getName();
-            
-            switch (type){
-                case "name":
-                    cityobject.setName(getStringFromInputStream(
-                    p.getInputStream()));
-                    break;
-                case "description":
-                    cityobject.setDescription(
-                            getStringFromInputStream(p.getInputStream()));
-                    break;
-                case "longitude":
-                    cityobject.setLongitute(Long.parseLong(getStringFromInputStream(
-                            p.getInputStream())));
-                    break;
-                case "latitude":
-                    cityobject.setLatitude(Long.parseLong(getStringFromInputStream(
-                            p.getInputStream())));
-                    break;
-                case "image":
-                    BufferedImage bufferedImage = ImageIO.read(p.getInputStream());
-                    cityobject.addImage(bufferedImage);
-                    break;  
+       /* String imageURL = "/Users/gustafwennerstrom/Documents/Jobb/SenseSmart/Databas"
+                            + "/images/";*/
+       out.println(getServletContext().getRealPath("/"));
+
+        String imageURL = "../../Databas/images/";
+        int images = 1;
+        out.println(parts.size());
+        if ( parts.size() >= 5){
+            for (Part p : parts){
+                String type = p.getName();
+                switch (type){
+                    case "name":
+                        cityobject.setName(getStringFromInputStream(
+                        p.getInputStream()));
+                        out.println("NAME is: "+cityobject.getName());
+                        break;
+                    case "description":
+                        cityobject.setDescription(
+                                getStringFromInputStream(p.getInputStream()));
+                        break;
+                    case "longitude":
+                        cityobject.setLongitute(getStringFromInputStream(
+                                p.getInputStream()).replace(",", "."));
+                        break;
+                    case "latitude":
+                        cityobject.setLatitude(getStringFromInputStream(
+                                p.getInputStream()).replace(",", "."));
+                        break;
+                    case "image":
+                        BufferedImage bufferedImage = ImageIO.read(p.getInputStream());
+                        String filePath = imageURL + cityobject.getName() + "-"
+                                +images+".png";
+                        cityobject.addImagePath(filePath);
+                        ImageIO.write(bufferedImage, "png", new File(filePath));
+                        images++;
+                        break;  
+
+                }
 
             }
-            
-        }        
-        out.print(cityobject.toString());
-        
-        /* Sparar bilder till filsystemet */
-        for (int i = 0; i<cityobject.getImages().size(); i++){
-            ImageIO.write(cityobject.getImages().get(i), "png", new File(
-                    "/Users/gustafwennerstrom/Documents/Jobb/SenseSmart/Databas"
-                            + "/images/"+cityobject.getName()+"-"+i+".png"));
         }
+        
+        else{
+            out.println("Du måste fylla i alla fält för att ladda in"
+                    + "ett nytt objekt.");
+        }
+        out.print(cityobject.toString());
+        addCityObjectToDatabase(cityobject);
+     
     }
         
     /**
@@ -100,7 +114,28 @@ public class MessageServlet extends HttpServlet {
         if (latitude != null){
             out.println("Latitude "+latitude+"?");
         }
+        out.println("Ska soka efter grejer i frankfurt");
+        
+        doStuff();
 
+        out.println("Success!");
+
+    }
+    
+    private void addCityObjectToDatabase(CityObject cityObject){
+        MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
+
+        MongoDatabase database = mongoClient.getDatabase("test");
+
+        MongoCollection collec1 = database.getCollection("cityobjects");
+        
+        BasicDBObject doc = new BasicDBObject("title", "MongoDB").
+            append("description", "database").
+            append("likes", 100).
+            append("url", "http://www.tutorialspoint.com/mongodb/").
+            append("by", "tutorials point");
+				
+         collec1.insertOne(doc);
     }
     
         /**
@@ -131,7 +166,7 @@ public class MessageServlet extends HttpServlet {
         
            try{   	
          // To connect to mongodb server
-         MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
+         MongoClient mongoClient = new MongoClient( "172.31.20.157" , 27017 );
 			
          // Now connect to your databases
         
@@ -140,11 +175,12 @@ public class MessageServlet extends HttpServlet {
          MongoDatabase database = mongoClient.getDatabase("test");
          
             MongoCollection<Document> collection = database.getCollection("cityobjects");
-            out.println(collection.find().toString());
+            out.println(collection.count());
+            out.println("HEJHEJ den är igenom!!");
           
       }
         catch(Exception e){
-         System.err.println(e.getClass().getName() + ": " + e.getMessage());
+         out.println(e.getClass().getName() + ": " + e.getMessage());
       }
         
    }
