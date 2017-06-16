@@ -37,16 +37,12 @@ public class MessageServlet extends HttpServlet {
         out = response.getWriter(); 
         Collection<Part> parts = request.getParts();
         CityObject cityobject = new CityObject();
-        
-        if(request.getParameter("longitude") != null && request.getParameter("latitude") != null) {
-            System.out.println("HEJ_VIKTOR");
-        } 
-        
-        else {
+        //addCityObjectToDatabase(cityobject);
+
         
        /* String imageURL = "/Users/gustafwennerstrom/Documents/Jobb/SenseSmart/Databas"
                             + "/images/";*/
-       out.println(getServletContext().getRealPath("/"));
+       //out.println(getServletContext().getRealPath("/"));
 
         String imageURL = "../../Databas/images/";
         int images = 1;
@@ -93,7 +89,7 @@ public class MessageServlet extends HttpServlet {
         out.print(cityobject.toString());
         addCityObjectToDatabase(cityobject);
      
-        }
+        
         }
         
     /**
@@ -112,6 +108,9 @@ public class MessageServlet extends HttpServlet {
     throws ServletException, IOException {
         
         out = response.getWriter();
+        
+        addCityObjectToDatabase(new CityObject());
+        
         String longitude = request.getParameter("longitude");
         String latitude = request.getParameter("latitude");
 
@@ -123,7 +122,7 @@ public class MessageServlet extends HttpServlet {
         }
         out.println("Ska soka efter grejer i frankfurt");
         
-        doStuff();
+      //  doStuff();
 
         out.println("Success!");
 
@@ -134,15 +133,21 @@ public class MessageServlet extends HttpServlet {
 
         MongoDatabase database = mongoClient.getDatabase("test");
 
-        MongoCollection collec1 = database.getCollection("cityobjects");
+        MongoCollection cityobjectsCol = database.getCollection("cityobjects");
         
-        BasicDBObject doc = new BasicDBObject("title", "MongoDB").
-            append("description", "database").
-            append("likes", 100).
-            append("url", "http://www.tutorialspoint.com/mongodb/").
-            append("by", "tutorials point");
-				
-         collec1.insertOne(doc);
+        cityobjectsCol.insertOne(new Document()
+               .append("name", cityObject.getName()).append(
+               "description", cityObject.getDescription()
+               ).append(
+               "coordinates", new Document().append(
+                       "longitude", cityObject.getLongitude()).append(
+                       "latitude", cityObject.getlatitude())
+                ).append("persons_voted", 0).append("rating", 0).append("images", cityObject.getImagePaths()));
+             
+     /* cityobjectsCol.insertOne(new Document("address",
+                new Document()
+                        .append("salutation", "HEJDÅÅ"
+                )));*/
     }
     
         /**
