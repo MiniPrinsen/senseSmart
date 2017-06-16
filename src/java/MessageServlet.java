@@ -38,6 +38,12 @@ public class MessageServlet extends HttpServlet {
         Collection<Part> parts = request.getParts();
         CityObject cityobject = new CityObject();
         
+        if(request.getParameter("longitude") != null && request.getParameter("latitude") != null) {
+            System.out.println("HEJ_VIKTOR");
+        } 
+        
+        else {
+        
        /* String imageURL = "/Users/gustafwennerstrom/Documents/Jobb/SenseSmart/Databas"
                             + "/images/";*/
        out.println(getServletContext().getRealPath("/"));
@@ -87,7 +93,8 @@ public class MessageServlet extends HttpServlet {
         out.print(cityobject.toString());
         addCityObjectToDatabase(cityobject);
      
-    }
+        }
+        }
         
     /**
      * 
