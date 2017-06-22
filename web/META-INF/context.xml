@@ -1,2 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/senseSmart"/>
+<!--<Context path="/senseSmart"/>-->
+<Context path="/senseSmart">
+    
+    <Resources allowLinking="true">
+        <PostResources readOnly="false"
+                       className="org.apache.catalina.webresources.DirResourceSet"
+                       base="../../Databas/images"
+                       webAppMount="/images"/>
+    </Resources>
+
+   
+</Context>

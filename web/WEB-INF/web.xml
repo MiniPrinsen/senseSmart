@@ -11,6 +11,7 @@
         <servlet-class>MessageServlet</servlet-class>
     </servlet>
     
+    
     <!-- Note: All <servlet> elements MUST be grouped together and
      placed IN FRONT of the <servlet-mapping> elements -->
     
@@ -18,4 +19,9 @@
         <servlet-name>HelloWorld</servlet-name>
         <url-pattern>/hey</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HelloWorld</servlet-name>
+        <url-pattern>/cityobjects</url-pattern>
+    </servlet-mapping>
+
 </web-app>

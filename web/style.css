@@ -8,10 +8,40 @@ and open the template in the editor.
     Author     : gustafwennerstrom
 */
 
+#cityObject{
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    background-color: white;
+    position: relative;
+    width: 100%;
+    border: 10px solid black;
+    margin-bottom: 40px;
+}
+
+#cityObject img{
+    	margin-left: auto;
+	margin-right: auto;
+        max-width: 600px;
+	display: block;
+        margin-top: 20px;
+}
+
+#cityObject p, h1{
+    text-align: center;
+    padding: 15px;
+    color: black;
+}
+
+#cityObject h1{
+    padding: 20px;
+}
+
+
+
 body{
-    
     font-family: 'Open Sans', sans-serif;
-    margin: 15px;
+    margin: 20px;
 }
 
 .txtInput{
